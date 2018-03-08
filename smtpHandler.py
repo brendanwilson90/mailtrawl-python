@@ -21,4 +21,5 @@ class SmtpHandler:
         response = self.connection.recv(512)
         response = response.split()
         client_hostname = response.pop()
-        acknowledge = '250 '
+        acknowledge = '250 %s Hello [%s]\n' % (domain, self.client_addr[0])
+        self.connection.sendall(acknowledge.encode())

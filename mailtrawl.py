@@ -33,7 +33,7 @@ def main():
     while True:
         conn, client_addr = s.accept()
         logger.debug('Incoming connection from %s', client_addr)
-        threading.Thread(target=connection_handler, args=(conn, client_addr, conf))
+        threading.Thread(target=connection_handler, args=(conn, client_addr, conf)).start()
 
 
 if __name__ == '__main__':
