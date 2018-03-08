@@ -3,7 +3,6 @@ import sys
 import logging
 import configparser
 
-
 class SmtpHandler:
 
     def __init__(self, connection, client_addr):
@@ -15,6 +14,11 @@ class SmtpHandler:
         self.client_addr = client_addr
         
 
-    def handle_session(self):
-        welcome = "220 %s" % self.conf.get('SMTP', 'SERVER_DOMAIN')
+    def greeting(self, domain):
+        # Handle greeting
+        welcome = "220 %s\n" % domain
         self.connection.sendall(welcome.encode())
+        response = self.connection.recv(512)
+        response = response.split()
+        client_hostname = response.pop()
+        acknowledge = '250 '

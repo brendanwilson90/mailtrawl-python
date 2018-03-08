@@ -2,13 +2,19 @@ import socket
 import sys
 import logging
 import configparser
+import threading
 from smtpHandler import SmtpHandler
 
 logger = logging.getLogger('mainlogger')
 out_hdlr = logging.StreamHandler(sys.stdout)
 out_hdlr.setLevel(logging.DEBUG)
 logger.addHandler(out_hdlr)
+logger.setLevel(logging.DEBUG)
 
+
+def connection_handler(connection, client_addr):
+    smtp = SmtpHandler(connection, client_addr)
+    connection.close()
 
 def main():
     if len(sys.argv) > 1:
@@ -26,8 +32,8 @@ def main():
     while True:
         conn, client_addr = s.accept()
         logger.debug('Incoming connection from %s', client_addr)
-        smtp = SmtpHandler(conn, client_addr)
-        smtp.handle_session()
+        threading.Thread(target=connection_handler, args=(conn, client_addr))
+
 
 if __name__ == '__main__':
     main()
