@@ -12,8 +12,9 @@ logger.addHandler(out_hdlr)
 logger.setLevel(logging.DEBUG)
 
 
-def connection_handler(connection, client_addr):
+def connection_handler(connection, client_addr, conf):
     smtp = SmtpHandler(connection, client_addr)
+    smtp.greeting(conf.get('SMTP', 'SERVER_DOMAIN'))
     connection.close()
 
 def main():
@@ -32,7 +33,7 @@ def main():
     while True:
         conn, client_addr = s.accept()
         logger.debug('Incoming connection from %s', client_addr)
-        threading.Thread(target=connection_handler, args=(conn, client_addr))
+        threading.Thread(target=connection_handler, args=(conn, client_addr, conf))
 
 
 if __name__ == '__main__':
